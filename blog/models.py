@@ -3,9 +3,18 @@ from django.db import models
 from django.utils import timezone
 
 class Post(models.Model):
+
+    class PublishedManager(models.Manager):
+        def get_queryset(self):
+            return (
+                super().get_queryset().filter(status=Post.Status.PUBLISHED)
+            )
+        
     class Status(models.TextChoices):
         DRAFT = 'DF', 'Draft'
         PUBLISHED = 'PB', 'Published'
+        objects = models.Manager() # The default manager.
+        published = PublishedManager() # Our custom manager.
 
 
     title = models.CharField(max_length = 255)
